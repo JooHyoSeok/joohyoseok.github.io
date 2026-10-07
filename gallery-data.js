@@ -17,7 +17,7 @@ const ALBUMS = [
   {
     "id": "2024-11_ksme",
     "tag": "conferences",
-    "title": "KSME Annual Meeting 2024",
+    "title": "KSME Conference 2024",
     "place": "Jeju, Korea",
     "date": "2024-11",
     "cover": "media/gallery/conferences/2024-11_ksme/IMG_4401.jpeg",
