@@ -15,7 +15,7 @@ const media = (src, alt = '') => isVideo(src)
   ? `<video src="${src}#t=0.1" muted playsinline preload="metadata"></video>`
   : `<img loading="lazy" src="${src}" alt="${alt}">`;
 const albumCard = a => `
-  <a class="card" href="gallery.html#${a.id}">
+  <a class="card" href="gallery.html?album=${a.id}">
     <div class="cover">${media(a.cover)}<span class="count">${a.items.length}</span></div>
     <b>${a.title}</b>
     <span class="meta">${a.place ? a.place + ' · ' : ''}${fmtDate(a.date)}</span>

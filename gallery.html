@@ -31,7 +31,7 @@
   </div>
 
   <div id="album" hidden>
-    <a class="back" href="#">← All albums</a>
+    <a class="back" href="gallery.html">← All albums</a>
     <h1></h1>
     <p class="meta"></p>
     <div class="photos"></div>
@@ -67,7 +67,9 @@
 
   let cur, idx;
   function route() {
-    cur = ALBUMS.find(a => a.id === location.hash.slice(1));
+    // album in ?album= (giscus login redirect strips #hash); #id still accepted for old links
+    const id = new URLSearchParams(location.search).get('album') || location.hash.slice(1);
+    cur = ALBUMS.find(a => a.id === id);
     listEl.hidden = !!cur;
     albumEl.hidden = !cur;
     if (!cur) return;
@@ -76,7 +78,6 @@
     photosEl.innerHTML = cur.items.map((p, i) => `
       <figure data-i="${i}" class="${isVideo(p.src) ? 'video' : ''}">${media(p.src, p.caption)}${p.caption ? `<figcaption>${p.caption}</figcaption>` : ''}</figure>`).join('');
     loadComments(cur.id);
-    scrollTo(0, 0);
   }
 
   // giscus: one GitHub Discussion per album, keyed by album id
@@ -124,7 +125,6 @@
   });
 
   renderList('all');
-  addEventListener('hashchange', route);
   route();
 </script>
 
