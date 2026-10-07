@@ -41,19 +41,5 @@ const ALBUMS = [
         "caption": ""
       }
     ]
-  },
-  {
-    "id": "2026_daily-life",
-    "tag": "personal",
-    "title": "Daily Life 2026",
-    "place": "",
-    "date": "2026",
-    "cover": "media/gallery/personal/2026_daily-life/example.png",
-    "items": [
-      {
-        "src": "media/gallery/personal/2026_daily-life/example.png",
-        "caption": "주효석"
-      }
-    ]
   }
 ];
