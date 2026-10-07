@@ -15,6 +15,20 @@ const ALBUMS = [
     ]
   },
   {
+    "id": "2025-02_kroc",
+    "tag": "conferences",
+    "title": "KROC 2025",
+    "place": "",
+    "date": "2025-02",
+    "cover": "media/gallery/conferences/2025-02_kroc/IMG_3568.jpeg",
+    "items": [
+      {
+        "src": "media/gallery/conferences/2025-02_kroc/IMG_3568.jpeg",
+        "caption": ""
+      }
+    ]
+  },
+  {
     "id": "2026_daily-life",
     "tag": "personal",
     "title": "Daily Life 2026",
