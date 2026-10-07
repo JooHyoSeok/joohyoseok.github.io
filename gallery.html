@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gallery · Hyoseok Ju</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <a class="brand" href="index.html">Hyoseok Ju</a>
+    <a href="index.html#news">News</a>
+    <a href="index.html#publications">Publications</a>
+    <a href="gallery.html">Gallery</a>
+    <a href="index.html#education">Education</a>
+  </div>
+</nav>
+
+<main class="wrap">
+  <div id="list">
+    <h1 class="page-title">Gallery</h1>
+    <div class="chips">
+      <button data-tag="all" aria-pressed="true">All</button>
+      <button data-tag="conferences" aria-pressed="false">Conferences</button>
+      <button data-tag="grad-school" aria-pressed="false">Grad School</button>
+      <button data-tag="personal" aria-pressed="false">Personal</button>
+    </div>
+    <div id="years"></div>
+  </div>
+
+  <div id="album" hidden>
+    <a class="back" href="#">← All albums</a>
+    <h1></h1>
+    <p class="meta"></p>
+    <div class="photos"></div>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">© 2026 Hyoseok Ju</div>
+</footer>
+
+<dialog id="lightbox">
+  <button class="nav prev" aria-label="Previous">‹</button>
+  <figure><div class="stage"></div><figcaption></figcaption></figure>
+  <button class="nav next" aria-label="Next">›</button>
+</dialog>
+
+<script src="gallery-data.js"></script>
+<script src="albums.js"></script>
+<script>
+  const $ = s => document.querySelector(s);
+  const listEl = $('#list'), albumEl = $('#album'), photosEl = $('#album .photos'), box = $('#lightbox');
+
+  function renderList(tag) {
+    const list = sortedAlbums().filter(a => tag === 'all' || a.tag === tag);
+    const years = [...new Set(list.map(a => a.date.slice(0, 4)))];
+    $('#years').innerHTML = years.map(y => `
+      <h2 class="year">${y}</h2>
+      <div class="albums">${list.filter(a => a.date.startsWith(y)).map(albumCard).join('')}</div>`).join('');
+    document.querySelectorAll('.chips button').forEach(b => b.setAttribute('aria-pressed', b.dataset.tag === tag));
+  }
+  $('.chips').addEventListener('click', e => { if (e.target.dataset.tag) renderList(e.target.dataset.tag); });
+
+  let cur, idx;
+  function route() {
+    cur = ALBUMS.find(a => a.id === location.hash.slice(1));
+    listEl.hidden = !!cur;
+    albumEl.hidden = !cur;
+    if (!cur) return;
+    $('#album h1').textContent = cur.title;
+    $('#album .meta').textContent = [cur.place, fmtDate(cur.date), countLabel(cur)].filter(Boolean).join(' · ');
+    photosEl.innerHTML = cur.items.map((p, i) => `
+      <figure data-i="${i}" class="${isVideo(p.src) ? 'video' : ''}">${media(p.src, p.caption)}${p.caption ? `<figcaption>${p.caption}</figcaption>` : ''}</figure>`).join('');
+    scrollTo(0, 0);
+  }
+
+  function show(i) {
+    const n = cur.items.length;
+    idx = (i + n) % n;
+    const p = cur.items[idx];
+    box.querySelector('.stage').innerHTML = isVideo(p.src)
+      ? `<video src="${p.src}" controls autoplay playsinline></video>`
+      : `<img src="${p.src}" alt="${p.caption}">`;
+    box.querySelector('figcaption').textContent = [p.caption, `${idx + 1} / ${n}`].filter(Boolean).join('  ·  ');
+  }
+  photosEl.addEventListener('click', e => {
+    const f = e.target.closest('figure');
+    if (f) { show(+f.dataset.i); box.showModal(); }
+  });
+  $('.prev').addEventListener('click', () => show(idx - 1));
+  $('.next').addEventListener('click', () => show(idx + 1));
+  box.addEventListener('click', e => { if (e.target === box) box.close(); });
+  box.addEventListener('close', () => box.querySelector('.stage').innerHTML = '');
+  box.addEventListener('keydown', e => {
+    if (e.key === 'ArrowLeft') show(idx - 1);
+    if (e.key === 'ArrowRight') show(idx + 1);
+  });
+
+  renderList('all');
+  addEventListener('hashchange', route);
+  route();
+</script>
+
+</body>
+</html>
