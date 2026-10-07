@@ -17,8 +17,8 @@ const ALBUMS = [
   {
     "id": "2025-02_kroc",
     "tag": "conferences",
-    "title": "KROC 2025",
-    "place": "",
+    "title": "KRoC 2025",
+    "place": "Pyeongchang, Korea",
     "date": "2025-02",
     "cover": "media/gallery/conferences/2025-02_kroc/IMG_3568.jpeg",
     "items": [
