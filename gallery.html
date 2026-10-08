@@ -58,9 +58,15 @@
   function renderList(tag) {
     const list = sortedAlbums().filter(a => tag === 'all' || a.tag === tag);
     const years = [...new Set(list.map(a => a.date.slice(0, 4)))];
-    $('#years').innerHTML = years.map(y => `
-      <h2 class="year">${y}</h2>
-      <div class="albums">${list.filter(a => a.date.startsWith(y)).map(albumCard).join('')}</div>`).join('');
+    $('#years').innerHTML = years.map(y => {
+      const inYear = list.filter(a => a.date.startsWith(y));
+      const months = [...new Set(inYear.map(a => a.date.slice(5)))];   // '' for year-only albums
+      return `<h2 class="year">${y}</h2>` + months.map(m => `
+        <div class="month">
+          <span>${m ? new Date(y, m - 1).toLocaleDateString('en-US', { month: 'short' }) : ''}</span>
+          <div class="albums">${inYear.filter(a => a.date.slice(5) === m).map(albumCard).join('')}</div>
+        </div>`).join('');
+    }).join('');
     document.querySelectorAll('.chips button').forEach(b => b.setAttribute('aria-pressed', b.dataset.tag === tag));
   }
   $('.chips').addEventListener('click', e => { if (e.target.dataset.tag) renderList(e.target.dataset.tag); });
@@ -113,8 +119,23 @@
   }
   photosEl.addEventListener('click', e => {
     const f = e.target.closest('figure');
-    if (f) { show(+f.dataset.i); box.showModal(); }
+    if (f) { show(+f.dataset.i); box.showModal(); zoomFrom(f); }
   });
+
+  // grow the full-size image out of the clicked thumbnail
+  function zoomFrom(fig) {
+    const img = box.querySelector('.stage img');
+    if (!img || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const from = fig.querySelector('img').getBoundingClientRect();
+    const run = () => {
+      const to = img.getBoundingClientRect();
+      img.animate([
+        { transformOrigin: 'top left', transform: `translate(${from.left - to.left}px, ${from.top - to.top}px) scale(${from.width / to.width}, ${from.height / to.height})` },
+        { transformOrigin: 'top left', transform: 'none' },
+      ], { duration: 300, easing: 'cubic-bezier(.2, .7, .2, 1)' });
+    };
+    img.complete ? run() : img.addEventListener('load', run, { once: true });
+  }
   $('.prev').addEventListener('click', () => show(idx - 1));
   $('.next').addEventListener('click', () => show(idx + 1));
   box.addEventListener('click', e => { if (e.target === box) box.close(); });

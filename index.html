@@ -19,6 +19,8 @@
   </div>
 </nav>
 
+<div id="hero-map" aria-hidden="true"></div>
+
 <main class="wrap">
 
   <header>
@@ -39,7 +41,10 @@
         <a href="https://team-aprl.github.io/">Lab</a>
       </div>
     </div>
-    <img class="photo" src="media/hero.jpg" alt="Hyoseok Ju">
+    <div class="photo-wrap" title="Hover to see this photo in 3D (Depth Anything 3)">
+      <img class="photo" src="media/hero.jpg" alt="Hyoseok Ju">
+      <canvas aria-hidden="true"></canvas>
+    </div>
   </header>
 
   <section>
@@ -129,11 +134,11 @@
     </article>
 
     <article class="pub">
-      <div class="thumb">KSME 2025</div>
+      <div class="thumb">KRoC 2025</div>
       <div>
         <h3>Feedback Control for Consistent Bio-Ink Line Width Printing Using a Real-Time Line Width Estimation Algorithm</h3>
         <p class="authors"><b>H. Ju</b>, J. Yu, S. Yang</p>
-        <p class="venue">KSME Conference (대한기계학회 춘추학술대회), 2025</p>
+        <p class="venue">Korea Robotics Society Annual Conference (KRoC, 한국로봇종합학술대회), 2025</p>
       </div>
     </article>
 
@@ -174,7 +179,16 @@
   const recent = sortedAlbums().sort((a, b) => (a.tag === 'personal') - (b.tag === 'personal')).slice(0, 4);
   document.getElementById('recent-albums').innerHTML = recent.map(albumCard).join('');
   document.getElementById('gallery').hidden = !recent.length;
+
+  // highlight the nav link of the section currently in view
+  const links = [...document.querySelectorAll('nav a[href^="#"]:not(.brand)')];
+  const spy = new IntersectionObserver(entries => entries.forEach(e => {
+    if (e.isIntersecting) links.forEach(a => a.classList.toggle('active', a.hash === '#' + e.target.id));
+  }), { rootMargin: '-45% 0px -50% 0px' });
+  links.forEach(a => spy.observe(document.querySelector(a.hash)));
 </script>
+<script type="module" src="hero.js"></script>
+<script type="module" src="photo3d.js"></script>
 
 </body>
 </html>
