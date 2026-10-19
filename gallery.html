@@ -71,7 +71,39 @@
   }
   $('.chips').addEventListener('click', e => { if (e.target.dataset.tag) renderList(e.target.dataset.tag); });
 
-  let cur, idx;
+  // easter egg: until unlocked, an album shows only its cover. Tap the "Gallery" title 7 times
+  // (Android's "tap build number to become a developer"). Remembered per browser.
+  // Hides from casual visitors only: every file is still in the public repo.
+  let unlocked = false;
+  try { unlocked = localStorage.getItem('gallery-unlocked') === '1'; } catch {}
+  const visible = a => unlocked ? a.items : a.items.filter(p => p.src === a.cover);
+
+  const toastEl = Object.assign(document.createElement('div'), { className: 'toast', role: 'status' });
+  document.body.append(toastEl);
+  let toastTimer;
+  function toast(msg) {
+    toastEl.textContent = msg;
+    toastEl.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toastEl.classList.remove('show'), 2200);
+  }
+
+  let taps = 0, lastTap = 0;
+  $('.page-title').addEventListener('click', () => {
+    if (unlocked) return toast('No need, you can already see everything.');
+    const now = Date.now();
+    taps = now - lastTap < 1500 ? taps + 1 : 1;
+    lastTap = now;
+    const left = 7 - taps;
+    if (left > 0 && left <= 3) toast(`You are now ${left} step${left > 1 ? 's' : ''} away from seeing every photo.`);
+    if (left === 0) {
+      unlocked = true;
+      try { localStorage.setItem('gallery-unlocked', '1'); } catch {}
+      toast('🔓 You found it! Every photo and video is unlocked.');
+    }
+  });
+
+  let cur, view, idx;
   function route() {
     // album in ?album= (giscus login redirect strips #hash); #id still accepted for old links
     const id = new URLSearchParams(location.search).get('album') || location.hash.slice(1);
@@ -81,7 +113,8 @@
     if (!cur) return;
     $('#album h1').textContent = cur.title;
     $('#album .meta').textContent = [cur.place, fmtDate(cur.date), countLabel(cur)].filter(Boolean).join(' · ');
-    photosEl.innerHTML = cur.items.map((p, i) => `
+    view = visible(cur);
+    photosEl.innerHTML = view.map((p, i) => `
       <figure data-i="${i}" class="${isVideo(p.src) ? 'video' : ''}">${media(p.src, p.caption)}${p.caption ? `<figcaption>${p.caption}</figcaption>` : ''}</figure>`).join('');
     loadComments(cur.id);
   }
@@ -109,9 +142,9 @@
   }
 
   function show(i) {
-    const n = cur.items.length;
+    const n = view.length;
     idx = (i + n) % n;
-    const p = cur.items[idx];
+    const p = view[idx];
     box.querySelector('.stage').innerHTML = isVideo(p.src)
       ? `<video src="${p.src}" controls autoplay playsinline></video>`
       : `<img src="${p.src}" alt="${p.caption}">`;

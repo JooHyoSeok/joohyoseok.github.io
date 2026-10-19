@@ -1,3 +1,7 @@
 # originals / private notes, not part of the site
 /hero.jpg
 /profile.md
+
+# local-only: session notes for Claude, Notion tooling (contains the private Notion page id)
+/CLAUDE.md
+/private/
