@@ -55,8 +55,10 @@
   const $ = s => document.querySelector(s);
   const listEl = $('#list'), albumEl = $('#album'), photosEl = $('#album .photos'), box = $('#lightbox');
 
+  let listTag = 'all';
   function renderList(tag) {
-    const list = sortedAlbums().filter(a => tag === 'all' || a.tag === tag);
+    listTag = tag;
+    const list = sortedAlbums().filter(a => (unlocked || a.tag !== 'personal') && (tag === 'all' || a.tag === tag));
     const years = [...new Set(list.map(a => a.date.slice(0, 4)))];
     $('#years').innerHTML = years.map(y => {
       const inYear = list.filter(a => a.date.startsWith(y));
@@ -71,12 +73,13 @@
   }
   $('.chips').addEventListener('click', e => { if (e.target.dataset.tag) renderList(e.target.dataset.tag); });
 
-  // easter egg: until unlocked, an album shows only its cover. Tap the "Gallery" title 7 times
+  // easter egg: until unlocked, an album shows only its cover and Personal albums are hidden. Tap the "Gallery" title 7 times
   // (Android's "tap build number to become a developer"). Remembered per browser.
   // Hides from casual visitors only: every file is still in the public repo.
   let unlocked = false;
   try { unlocked = localStorage.getItem('gallery-unlocked') === '1'; } catch {}
   const visible = a => unlocked ? a.items : a.items.filter(p => p.src === a.cover);
+  $('.chips [data-tag="personal"]').hidden = !unlocked;
 
   const toastEl = Object.assign(document.createElement('div'), { className: 'toast', role: 'status' });
   document.body.append(toastEl);
@@ -100,6 +103,8 @@
       unlocked = true;
       try { localStorage.setItem('gallery-unlocked', '1'); } catch {}
       toast('🔓 You found it! Every photo and video is unlocked.');
+      $('.chips [data-tag="personal"]').hidden = false;
+      renderList(listTag);
     }
   });
 
@@ -107,7 +112,7 @@
   function route() {
     // album in ?album= (giscus login redirect strips #hash); #id still accepted for old links
     const id = new URLSearchParams(location.search).get('album') || location.hash.slice(1);
-    cur = ALBUMS.find(a => a.id === id);
+    cur = ALBUMS.find(a => a.id === id && (unlocked || a.tag !== 'personal'));
     listEl.hidden = !!cur;
     albumEl.hidden = !cur;
     if (!cur) return;

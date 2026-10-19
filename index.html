@@ -175,8 +175,11 @@
 <script src="gallery-data.js"></script>
 <script src="albums.js"></script>
 <script>
-  // latest 4 albums, personal ones only fill leftover slots; the rest live on gallery.html
-  const recent = sortedAlbums().sort((a, b) => (a.tag === 'personal') - (b.tag === 'personal')).slice(0, 4);
+  // latest 4 albums, personal ones only fill leftover slots (and only once the gallery easter egg is unlocked)
+  let unlocked = false;
+  try { unlocked = localStorage.getItem('gallery-unlocked') === '1'; } catch {}
+  const recent = sortedAlbums().filter(a => unlocked || a.tag !== 'personal')
+    .sort((a, b) => (a.tag === 'personal') - (b.tag === 'personal')).slice(0, 4);
   document.getElementById('recent-albums').innerHTML = recent.map(albumCard).join('');
   document.getElementById('gallery').hidden = !recent.length;
 
