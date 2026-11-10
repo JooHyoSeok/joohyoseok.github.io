@@ -1027,5 +1027,35 @@ const ALBUMS = [
         "caption": ""
       }
     ]
+  },
+  {
+    "id": "2026-11_ssrr",
+    "tag": "conferences",
+    "title": "SSRR 2026",
+    "place": "Incheon, Korea",
+    "date": "2026-11",
+    "cover": "media/gallery/conferences/2026-11_ssrr/IMG_8058.jpeg",
+    "items": [
+      {
+        "src": "media/gallery/conferences/2026-11_ssrr/IMG_8049.jpeg",
+        "caption": ""
+      },
+      {
+        "src": "media/gallery/conferences/2026-11_ssrr/IMG_8051.jpeg",
+        "caption": ""
+      },
+      {
+        "src": "media/gallery/conferences/2026-11_ssrr/IMG_8053.jpeg",
+        "caption": ""
+      },
+      {
+        "src": "media/gallery/conferences/2026-11_ssrr/IMG_8056.jpeg",
+        "caption": ""
+      },
+      {
+        "src": "media/gallery/conferences/2026-11_ssrr/IMG_8058.jpeg",
+        "caption": ""
+      }
+    ]
   }
 ];
