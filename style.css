@@ -39,19 +39,6 @@ nav a:not(.brand)::after { content: ""; position: absolute; left: 0; right: 0; b
 nav a.active { color: var(--fg); }
 nav a.active::after { transform: scaleX(1); }
 
-/* homepage background map (hero.js) */
-#hero-map {
-  position: absolute; top: 0; left: 0; width: 100%; height: 640px; z-index: 0; pointer-events: none;
-  opacity: 0; transition: opacity 1.2s;
-  /* fade out toward the bottom and toward the text column on the left */
-  -webkit-mask-image: linear-gradient(to bottom, #000 55%, transparent), linear-gradient(to right, transparent 0%, #000 20%);
-  -webkit-mask-composite: source-in;
-          mask-image: linear-gradient(to bottom, #000 55%, transparent), linear-gradient(to right, transparent 0%, #000 20%);
-          mask-composite: intersect;
-}
-#hero-map.ready { opacity: .65; }
-#hero-map canvas { width: 100%; height: 100%; display: block; }
-main, footer { position: relative; z-index: 1; }
 
 /* header */
 header { display: grid; grid-template-columns: 1fr 200px; gap: 40px; align-items: center; padding: 56px 0 40px; }
@@ -187,6 +174,4 @@ footer { padding: 32px 0 48px; color: var(--muted); font-size: 13px; border-top:
   .thumb { max-width: 320px; }
   .news li, .timeline li { grid-template-columns: 1fr; gap: 0; }
   .month { grid-template-columns: 1fr; gap: 8px; }
-  #hero-map { -webkit-mask-image: linear-gradient(to bottom, #000 40%, transparent); mask-image: linear-gradient(to bottom, #000 40%, transparent); }
-  #hero-map.ready { opacity: .3; }
 }
